@@ -1,26 +1,36 @@
 import { createClient } from '@supabase/auth-helpers-sveltekit'
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLIC_KEY } from '$env/static/public';
+import {
+  PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_PUBLIC_KEY,
+} from '$env/static/public'
 
-export const supabase = createClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLIC_KEY, {
-  // auth: {
-  //   autoRefreshToken: true,
-  //   persistSession: true,
-  // },
-  realtime: {
-    params: {
-      eventsPerSecond: 10,
+export const supabase = createClient(
+  PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_PUBLIC_KEY,
+  {
+    // auth: {
+    //   autoRefreshToken: true,
+    //   persistSession: true,
+    // },
+    realtime: {
+      params: {
+        eventsPerSecond: 10,
+      },
     },
-  },
-})
+  }
+)
 
 export async function sign_up({ email, password }) {
   let { data, error } = await supabase.auth.signUp({ email, password })
-  return {data, error}
+  return { data, error }
 }
 
 export async function sign_in({ email, password }) {
-  let { data, error } = await supabase.auth.signInWithPassword({ email, password })
-  return {data, error}
+  let { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
+  return { data, error }
 }
 
 export async function sign_out() {

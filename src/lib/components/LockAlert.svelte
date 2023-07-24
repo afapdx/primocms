@@ -11,8 +11,10 @@
       on:click={() => {
         window.location.reload()
       }}
-      class="button outlined">Try again</button
+      class="button outlined"
     >
+      Try again
+    </button>
     <a href="/" class="button">Back to Dashboard</a>
   </div>
 </div>

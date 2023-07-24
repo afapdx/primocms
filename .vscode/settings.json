@@ -6,8 +6,6 @@
     "example/public": true
   },
   "editor.formatOnSave": true,
-  "[svelte]": {"editor.defaultFormatter": "svelte.svelte-vscode"},
-  "i18n-ally.localesPaths": [
-    "src/lib/editor/languages"
-  ]
+  "[svelte]": { "editor.defaultFormatter": "svelte.svelte-vscode" },
+  "i18n-ally.localesPaths": ["src/lib/editor/languages"]
 }
