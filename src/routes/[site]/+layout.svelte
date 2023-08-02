@@ -28,6 +28,9 @@
         res = await supabase.from(table).select(data).match(match)
       }
     }
+    if (res.error) {
+      console.log('Error: ', { res })
+    }
     return res.data
   })
 
@@ -44,6 +47,43 @@
   export let data
 </script>
 
-<Primo {data}>
-  <slot />
-</Primo>
+{#if data.alert}
+  <div class="alert">
+    <div class="container">{@html data.alert}</div>
+  </div>
+{:else}
+  <Primo
+    role={data.user.role}
+    data={{
+      site: data.site,
+      pages: data.pages,
+      symbols: data.symbols,
+    }}
+  >
+    <slot />
+  </Primo>
+{/if}
+
+<style lang="postcss">
+  .alert {
+    position: fixed;
+    inset: 0;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #111;
+    color: white;
+    font-family: system-ui, sans-serif;
+
+    .container {
+      background: #222;
+      padding: 2rem;
+      border-radius: 0.25rem;
+
+      :global(a) {
+        color: #35d994;
+      }
+    }
+  }
+</style>

@@ -37,6 +37,9 @@
     channel.track({
       ...res,
       presence_key,
+      user: {
+        email: data.user.email,
+      },
     })
   })
 
@@ -59,4 +62,9 @@
   }
 </script>
 
-<PrimoPage {data} />
+<PrimoPage
+  page={{
+    ...data.page,
+    sections: data.sections,
+  }}
+/>

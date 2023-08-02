@@ -46,13 +46,22 @@ export async function load(event) {
         .from('symbols')
         .select()
         .match({ site: site.id })
-        .order('created_at', { ascending: false }),
+        .order('index', { ascending: true }),
       supabaseClient
         .from('sections')
-        .select('id, page, index, content, symbol (*)')
+        .select('id, page, index, content, symbol')
         .match({ page: page['id'] })
-        .order('index', { ascending: false }),
+        .order('index', { ascending: true }),
     ])
+
+  // Check to ensure symbols have an index column (v2.0.0--beta.12)
+  if (!symbols) {
+    return {
+      alert: `Your database is misconfigured and needs a quick change to support the latest version of Primo. Please run the following query from your Supabase SQL Editor, then refresh this page.
+      <pre>alter table symbols\nadd column index integer;</pre><br>
+      See the <a target="blank" href="https://primocms.org/changelog">release notes</a> for more info or ask for help in our <a target="blank" href="https://discord.gg/RmjYqDq">Discord</a>.`,
+    }
+  }
 
   return {
     site,

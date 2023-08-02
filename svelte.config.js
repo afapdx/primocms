@@ -12,7 +12,13 @@ const config = {
     adapter: adapter(),
   },
   vitePlugin: {
-    inspector: true,
+    inspector: false,
+  },
+  onwarn: (warning, handler) => {
+    if (warning.filename.includes('svelte-json-tree')) {
+      return
+    }
+    handler(warning)
   },
 }
 
