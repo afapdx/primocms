@@ -1,6 +1,6 @@
 import { rollup } from '../lib/rollup-browser'
 import registerPromiseWorker from 'promise-worker/register'
-import {compile as svelte_compile} from '../lib/svelte-compiler.min.js'
+import { compile as svelte_compile } from '../lib/svelte-compiler.min.js'
 
 // Based on https://github.com/pngwn/REPLicant
 
@@ -172,44 +172,12 @@ registerPromiseWorker(async function ({
                 .href
             } else return `https://cdn.skypack.dev/${importee}` // use skypack as a fallback
 
-                        // everything else comes from a cdn
-                        return await fetch_package(id);
-                    },
-                    async transform(code, id) {
-                        // our only transform is to compile svelte components
-                        //@ts-ignore
-                        if (/.*\.svelte/.test(id)) {
-                            try {
-                                const res = svelte_compile(code, svelteOptions)
-                                // temporary workaround for handling when LocaleSelector.svelte breaks because of race condition
-                                // TODO: find cause & remove workaround
-                                if (res.vars?.[0]?.['name'] === 'undefined') {
-                                    console.warn('Used temporary workaround to hide component')
-                                    let newRes = svelte_compile('<div></div>', svelteOptions)
-                                    return newRes.js.code
-                                }
-                                const warnings = res.warnings
-                                    .filter(w => !w.message.startsWith(`Component has unused export`))
-                                    .filter(w => !w.message.startsWith(`A11y: <img> element should have an alt attribute`))
-                                    .filter(w => w.code !== `a11y-missing-content`)
-                                    .filter(w => !w.message.startsWith(`Unused CSS selector`)) // TODO: reinstate
-                                if (warnings[0]) {
-                                    final.error = warnings[0].toString()
-                                    return ''
-                                } else {
-                                    return res.js.code;
-                                }
-                            } catch (e) {
-                                console.log({ e })
-                                final.error = e.toString()
-                                return ''
-                            }
-                        }
-                    },
-                },
-            ],
-        });
-    }
+            return importee // everything else
+          },
+          async load(id) {
+            // local repl components are stored in memory
+            // this is our virtual filesystem
+            if (component_lookup.has(id)) return component_lookup.get(id)
 
             // everything else comes from a cdn
             return await fetch_package(id)
@@ -219,12 +187,12 @@ registerPromiseWorker(async function ({
             //@ts-ignore
             if (/.*\.svelte/.test(id)) {
               try {
-                const res = svelte.compile(code, svelteOptions)
+                const res = svelte_compile(code, svelteOptions)
                 // temporary workaround for handling when LocaleSelector.svelte breaks because of race condition
                 // TODO: find cause & remove workaround
                 if (res.vars?.[0]?.['name'] === 'undefined') {
                   console.warn('Used temporary workaround to hide component')
-                  let newRes = svelte.compile('<div></div>', svelteOptions)
+                  let newRes = svelte_compile('<div></div>', svelteOptions)
                   return newRes.js.code
                 }
                 const warnings = res.warnings
