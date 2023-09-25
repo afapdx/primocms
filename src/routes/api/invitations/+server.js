@@ -9,6 +9,13 @@ export async function POST({ request }) {
     role,
     email,
   } = await request.json()
+  const {
+    url,
+    site = null,
+    server_invitation,
+    role,
+    email,
+  } = await request.json()
 
   const { data, error } = await supabase_admin.auth.admin.inviteUserByEmail(
     email,
@@ -32,8 +39,10 @@ export async function POST({ request }) {
 
     console.error(error)
     return json({ success: !error, error: error?.message })
+    return json({ success: !error, error: error?.message })
   } else {
     console.error(error)
+    return json({ success: false, error: error.message })
     return json({ success: false, error: error.message })
   }
 }

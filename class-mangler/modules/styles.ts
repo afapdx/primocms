@@ -1,7 +1,10 @@
-import { cssPseudoRegex, escapeClassName } from '../utils';
+import { cssPseudoRegex, escapeClassName } from '../utils'
 
-export default function transformStyles(code, classMapping: Map<string, string>) {
-  let classesToReplace = [];
+export default function transformStyles(
+  code,
+  classMapping: Map<string, string>
+) {
+  let classesToReplace = []
 
   classMapping.forEach((randomClassName, className) => {
     classesToReplace = [
@@ -9,21 +12,21 @@ export default function transformStyles(code, classMapping: Map<string, string>)
       {
         raw: className,
         random: randomClassName,
-        escaped: escapeClassName(className)
-      }
-    ];
-  });
+        escaped: escapeClassName(className),
+      },
+    ]
+  })
 
   classesToReplace.forEach((classToReplace) => {
     const regex = new RegExp(
       `\\.(?:${classToReplace.escaped})(?=[\\w\\d .:{]+)((?::(?:${cssPseudoRegex}))*(?:[(\\w\\d )]*))`,
       'gm'
-    );
-    code = code.replace(regex, '.' + classToReplace.random + '$1');
-  });
+    )
+    code = code.replace(regex, '.' + classToReplace.random + '$1')
+  })
 
   return {
     code,
-    map: null
-  };
+    map: null,
+  }
 }

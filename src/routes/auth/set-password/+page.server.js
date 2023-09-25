@@ -28,3 +28,6 @@ export const actions = {
     return { success: !error, error }
   },
 }
+    return { success: !error, error }
+  },
+}

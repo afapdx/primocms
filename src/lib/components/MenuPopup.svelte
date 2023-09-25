@@ -64,8 +64,9 @@
               <button
                 class:selected={selected_submenu_option?.id === option.id}
                 on:click={() => (selected_submenu_option = option)}
-                >{option.label}</button
               >
+                {option.label}
+              </button>
             {/each}
           </div>
           {#if button}
@@ -79,8 +80,10 @@
                   // }
                   showing_popup = false
                   selected_submenu_option = null
-                }}>{button.label}</button
+                }}
               >
+                {button.label}
+              </button>
             </footer>
           {/if}
         </div>

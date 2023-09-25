@@ -1,4 +1,4 @@
-import { escapeClassName, getRandomClassName, getRegexps } from '../utils';
+import { escapeClassName, getRandomClassName, getRegexps } from '../utils'
 
 export default function transformTemplates(
   id: string,
@@ -6,7 +6,7 @@ export default function transformTemplates(
   classMapping: Map<string, string>,
   config: GeneratorConfig
 ) {
-  const rawClasses = getRawClasses(id, code);
+  const rawClasses = getRawClasses(id, code)
 
   const unqiueClasses = new Set(
     rawClasses
@@ -14,66 +14,69 @@ export default function transformTemplates(
       .flat()
       .filter((c) => c.length > 0)
       .sort((a, b) => b.length - a.length)
-  );
+  )
 
   unqiueClasses.forEach((className) => {
     if (!classMapping.has(className)) {
-      let random = getRandomClassName(config);
-      const classMappingList = Array.from(classMapping.values());
+      let random = getRandomClassName(config)
+      const classMappingList = Array.from(classMapping.values())
 
       while (classMappingList.includes(random)) {
-        random = getRandomClassName(config);
+        random = getRandomClassName(config)
       }
 
-      classMapping.set(className, random);
+      classMapping.set(className, random)
     }
-  });
+  })
 
-  const rawClassesMap = new Map();
+  const rawClassesMap = new Map()
 
   rawClasses.forEach((classNames) => {
     const randomClassNames = classNames
       .split(' ')
       .map((className) => {
         if (classMapping.has(className)) {
-          return classMapping.get(className);
+          return classMapping.get(className)
         }
       })
-      .join(' ');
+      .join(' ')
 
-    rawClassesMap.set(classNames, randomClassNames);
-  });
+    rawClassesMap.set(classNames, randomClassNames)
+  })
 
   rawClasses
     .sort((a, b) => b.length - a.length)
     .forEach((classNames) => {
-      let match: RegExpExecArray;
-      const regex = new RegExp(`(?<="class",.*?)${escapeClassName(classNames)}(?=[\\s"')])`, 'g');
+      let match: RegExpExecArray
+      const regex = new RegExp(
+        `(?<="class",.*?)${escapeClassName(classNames)}(?=[\\s"')])`,
+        'g'
+      )
       while ((match = regex.exec(code)) !== null) {
         if (match.index > 0 && code[match.index - 2] === ',') {
-          code = code.replace(match[0], `"${rawClassesMap.get(classNames)}"`);
+          code = code.replace(match[0], `"${rawClassesMap.get(classNames)}"`)
         } else {
-          code = code.replace(match[0], `${rawClassesMap.get(classNames)}`);
+          code = code.replace(match[0], `${rawClassesMap.get(classNames)}`)
         }
       }
-    });
+    })
 
   return {
     code,
-    map: null
-  };
+    map: null,
+  }
 }
 
 const getRawClasses = (id: string, code: string) => {
-  const rawClasses: string[] = [];
-  const regexps = getRegexps(id);
+  const rawClasses: string[] = []
+  const regexps = getRegexps(id)
 
   regexps.forEach((regex) => {
-    let match: RegExpExecArray | null;
+    let match: RegExpExecArray | null
     while ((match = regex.exec(code)) !== null) {
-      rawClasses.push(match[0]);
+      rawClasses.push(match[0])
     }
-  });
+  })
 
-  return rawClasses;
-};
+  return rawClasses
+}
